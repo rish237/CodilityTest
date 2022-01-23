@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="MyTestingSuiteChrome" allow-return-values="true">
+    <parameter name="browserName" value="chrome"/>
+    <test name ="RegressionTesting" >
+        <classes>
+            <class name = "RegressionTestCases">
+            <methods>
+                <include name="createWarriorAndLogin"/>
+                <include name="doSomeChallenges" />
+                <include name="do4000pointsChallenges"/>
+            </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

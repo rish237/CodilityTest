@@ -1,0 +1,295 @@
+{
+	"info": {
+		"_postman_id": "20c53941-7da5-47c0-a380-000b5cac0952",
+		"name": "User_Authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "registerUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify Registration Status code is 200\", function () ",
+							"{",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"",
+							"",
+							"",
+							"var Username = \"Tester\"+Date.now().toString().substring(5,17);",
+							"",
+							"console.log(\"Username \"+Username);",
+							"",
+							"pm.environment.set(\"Username\", Username);",
+							"",
+							"pm.environment.set(\"Password\", Username);",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "source_language",
+						"value": "en",
+						"type": "default"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{AuthKey}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{Username}}\",\n  \"password\": \"{{Password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{AuthURL}}/register",
+					"host": [
+						"{{AuthURL}}"
+					],
+					"path": [
+						"register"
+					],
+					"query": [
+						{
+							"key": "YEAH",
+							"value": "HSHS",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "loginUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var LoginStatus = pm.iterationData.get(\"LoginStatus\");",
+							"",
+							"// if(Executable ==true)",
+							"// {",
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify Login Status\", function () ",
+							"{",
+							"    pm.response.to.have.status(LoginStatus);",
+							"});",
+							"",
+							"var TestCase = pm.iterationData.get(\"TestCase\");",
+							"console.log(\"TestCase \"+TestCase);",
+							"var response=pm.response.json();",
+							"",
+							"if(TestCase == \"TC003_InvalidLogin\")",
+							"{",
+							"   console.log(\"response.error \"+response.error)",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify Response\", function () {",
+							"   ",
+							"   pm.expect(response.error).to.eql(\"Username or Password is incorrect\");",
+							"",
+							"});",
+							"}",
+							"",
+							"else",
+							"{",
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify Response\", function () {",
+							"   ",
+							"",
+							"   console.log(\"response.expiresIn \"+response.expiresIn)",
+							"",
+							"   pm.expect(response.expiresIn).to.eql(\"3 min\");",
+							"",
+							"",
+							"   ",
+							"});",
+							"",
+							"}",
+							"//}",
+							"var ignoreAnotherRegister = pm.iterationData.get(\"IgnoreSecondRegister\")",
+							"console.log(\"ignoreAnotherRegister \"+ ignoreAnotherRegister)",
+							"if(ignoreAnotherRegister == \"false\")",
+							"{",
+							"postman.setNextRequest('registerSameUser')",
+							"}",
+							"else",
+							"{",
+							" postman.setNextRequest(null)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"",
+							"var TestCase = pm.iterationData.get(\"TestCase\");",
+							"console.log(\"TestCase \"+TestCase);",
+							"",
+							"if(TestCase == \"TC003_InvalidLogin\")",
+							"{",
+							"    pm.environment.set(\"Username\", \"Abcdsssa\");",
+							"",
+							"    pm.environment.set(\"Password\", \"hsgsssssha\");",
+							" ",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "source_language",
+						"value": "en",
+						"type": "default"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{AuthKey}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{Username}}\",\n  \"password\": \"{{Password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{AuthURL}}/login",
+					"host": [
+						"{{AuthURL}}"
+					],
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "YEAH",
+							"value": "HSHS",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "registerSameUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Status code is 400\", function () ",
+							"{",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "source_language",
+						"value": "en",
+						"type": "default"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{AuthKey}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{Username}}\",\n  \"password\": \"{{Password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{AuthURL}}/register",
+					"host": [
+						"{{AuthURL}}"
+					],
+					"path": [
+						"register"
+					],
+					"query": [
+						{
+							"key": "YEAH",
+							"value": "HSHS",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

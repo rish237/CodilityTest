@@ -1,0 +1,298 @@
+{
+	"info": {
+		"_postman_id": "53212c68-ffb5-4fb4-b528-f4078903a1f9",
+		"name": "AddUpdateViewUser",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "addUser",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var Username = \"User\"+Date.now().toString().substring(5,17);",
+							"",
+							"console.log(\"Username \"+Username);",
+							"",
+							"pm.environment.set(\"Username\", Username);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify Status code \", function () {",
+							"    pm.response.to.have.status(pm.iterationData.get(\"AddStatus\"));",
+							"});",
+							"",
+							"if(pm.iterationData.get(\"TestCase\") == \"TC002_InvalidRequests\")",
+							"{",
+							"   pm.test(pm.iterationData.get(\"TestCase\")+\": Verify Error Received\", function () {",
+							"   const $ = cheerio.load(responseBody);",
+							"   var textstring = $('title').text() ",
+							"   pm.expect(textstring).to.eql(\"Error\");",
+							"   });",
+							"   postman.setNextRequest('updateUser')",
+							"}",
+							"else",
+							"{",
+							"var response=pm.response.json();",
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify User is added\", function () {",
+							"",
+							"   pm.expect(response.status).to.eql(\"success\");",
+							"   pm.expect(response.message).to.eql(\"User added.\");",
+							"",
+							"});",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AuthKey}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{Username}}\",\n  \"score\": {{Score}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{UserLeaderBoardUrl}}",
+					"host": [
+						"{{UserLeaderBoardUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verifyUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response=pm.response.json();",
+							"var Username=pm.environment.get(\"Username\");",
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"});",
+							"",
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify User was added\", function () {",
+							"",
+							"var userFound = false;",
+							"var Score=pm.iterationData.get(\"Score\")",
+							"",
+							"for(var i=0;i< response.length;i++)",
+							"{",
+							"  if(response[i].username == Username)",
+							"  {",
+							"      pm.expect(response[i].score).to.eql(Score);",
+							"      userFound=true;",
+							"  }",
+							"}",
+							"",
+							"if(userFound==false)",
+							"{",
+							"    pm.expect(true).to.eql(false);",
+							"}",
+							"",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AuthKey}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{UserLeaderBoardUrl}}",
+					"host": [
+						"{{UserLeaderBoardUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateUser",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var Username = \"User\"+Date.now().toString().substring(5,17);",
+							"",
+							"console.log(\"Username \"+Username);",
+							"",
+							"pm.environment.set(\"Username\", Username);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"var Username=pm.environment.get(\"Username\");",
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify Status code \", function () {",
+							"    pm.response.to.have.status(pm.iterationData.get(\"AddStatus\"));",
+							"});",
+							"",
+							"if(pm.iterationData.get(\"TestCase\") == \"TC002_InvalidRequests\")",
+							"{",
+							"   pm.test(pm.iterationData.get(\"TestCase\")+\": Verify Error Received\", function () {",
+							"   const $ = cheerio.load(responseBody);",
+							"   var textstring = $('title').text() ",
+							"   pm.expect(textstring).to.eql(\"Error\");",
+							"   });",
+							"   postman.setNextRequest(null);",
+							"}",
+							"else",
+							"{",
+							"var response=pm.response.json();",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify User is updated\", function () {",
+							"",
+							"   pm.expect(response.status).to.eql(\"success\");",
+							"   pm.expect(response.message).to.eql(\"User \"+Username+\" added with updated score\");",
+							"",
+							"});",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"strictSSL": false
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AuthKey}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{Username}}\",\n  \"score\": {{UpdateScore}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{UserLeaderBoardUrl}}",
+					"host": [
+						"{{UserLeaderBoardUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verifyUserAfterUpdate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response=pm.response.json();",
+							"var Username=pm.environment.get(\"Username\");",
+							"var UpdateScore=pm.iterationData.get(\"UpdateScore\")",
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"});",
+							"",
+							"",
+							"pm.test(pm.iterationData.get(\"TestCase\")+\": Verify User was updated\", function () {",
+							"",
+							"var userFound = false;",
+							"",
+							"for(var i=0;i< response.length;i++)",
+							"{",
+							"  if(response[i].username == Username)",
+							"  {",
+							"      pm.expect(response[i].score).to.eql(UpdateScore);",
+							"      userFound=true;",
+							"  }",
+							"}",
+							"",
+							"if(userFound==false)",
+							"{",
+							"    pm.expect(true).to.eql(false);",
+							"}",
+							"",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AuthKey}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{UserLeaderBoardUrl}}",
+					"host": [
+						"{{UserLeaderBoardUrl}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

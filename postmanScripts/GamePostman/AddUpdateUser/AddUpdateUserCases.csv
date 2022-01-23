@@ -1,0 +1,5 @@
+TestCase,Score,UpdateScore,AddStatus
+TC001_AddUpdateUser,1000,2300,201
+TC002_InvalidRequests,abcdc,shsgy,400
+
+

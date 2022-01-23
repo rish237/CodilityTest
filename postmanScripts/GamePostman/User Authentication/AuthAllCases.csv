@@ -1,0 +1,4 @@
+TestCase,IgnoreSecondRegister,Executable,LoginStatus
+TC001_ValidUserNamePassword,true,false,200
+TC002_AlreadyExistingUsername,false,true,200
+TC003_InvalidLogin,true,true,400
